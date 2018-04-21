@@ -41,8 +41,10 @@ class Fishpig_Wordpress_Addon_AMP_Helper_Core extends Mage_Core_Helper_Abstract
 		}
 
 		if ((int)Mage::app()->getStore()->getId() === 0) {
-			return;
-		}		
+			if (strpos(Mage::app()->getRequest()->getControllerName(), 'wordpress') !== 0) {
+				return;
+			}
+		}	
 		
 		try {
 			if (($path = Mage::helper('wordpress')->getWordPressPath()) === false) {
@@ -130,7 +132,7 @@ class Fishpig_Wordpress_Addon_AMP_Helper_Core extends Mage_Core_Helper_Abstract
 					$this->__('Unable to find wp-load.php at %s', dirname($file))
 				);
 			}
-			
+
 			// Fix for Multisite set_prefix error
 			global $wpdb;
 
@@ -172,12 +174,21 @@ class Fishpig_Wordpress_Addon_AMP_Helper_Core extends Mage_Core_Helper_Abstract
 		}
 	}
 
+	/*
+	 * Get the HTML
+	 *
+	 * @return string|false
+	 */
 	public function getHtml()
 	{
 		return ($html = Mage::registry('wordpress_html'))
 			? $html: false;
 	}
-	
+
+	/*
+	 * Update an array
+	 *
+	 */
 	protected function _updateArray(&$a, $values)
 	{
 		$originals = array();
@@ -350,4 +361,32 @@ class Fishpig_Wordpress_Addon_AMP_Helper_Core extends Mage_Core_Helper_Abstract
 		
 		return $this;
 	}	
+
+	/*
+	 * Perform a callback during WordPress simulation mode
+	 *
+	 * @param $callback
+	 * @return mixed
+	 */
+	public function simulatedCallback($callback, array $params = array())
+	{
+		$result = null;
+		
+		if ($this->isActive()) {
+			try {
+				$this->startWordPressSimulation();
+				
+				$result = call_user_func_array($callback, $params);
+				
+				$this->endWordPressSimulation();
+			}
+			catch (Exception $e) {
+				$this->endWordPressSimulation();
+				
+				Mage::helper('wordpress')->log($e);
+			}
+		}
+		
+		return $result;
+	}
 }
