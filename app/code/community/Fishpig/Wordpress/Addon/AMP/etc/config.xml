@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Fishpig_Wordpress_Addon_AMP>
-			<version>1.0.0.5</version>
+			<version>1.0.0.6</version>
 			<fishpig>
 				<id>amp</id>
 				<name>AMP</name>
@@ -57,29 +57,11 @@
 			</wordpress_integration_tests_after>
 		</events>
 	</adminhtml>
-	<fishpig>
-		<injection>
-			<Fishpig_Inject_Wordpress_Block_System_Config_Form_Field_License>
-				<Fishpig_Wordpress_Addon_AMP>
-					<Block_System_Config_Form_Field_License><ignore /></Block_System_Config_Form_Field_License>
-				</Fishpig_Wordpress_Addon_AMP>
-			</Fishpig_Inject_Wordpress_Block_System_Config_Form_Field_License>
-			<Fishpig_Inject_Wordpress_Helper_License>
-				<Fishpig_Wordpress_Addon_AMP>
-					<Helper_License><ignore /></Helper_License>
-				</Fishpig_Wordpress_Addon_AMP>
-			</Fishpig_Inject_Wordpress_Helper_License>
-			<Fishpig_Inject_Wordpress_Helper_Core>
-				<Fishpig_Wordpress_Addon_AMP>
-					<Helper_Core><ignore /></Helper_Core>
-				</Fishpig_Wordpress_Addon_AMP>
-			</Fishpig_Inject_Wordpress_Helper_Core>
-		</injection>
-		<encode>
-			<helper_license>app/code/community/Fishpig/Wordpress/Addon/AMP/Helper/License.php</helper_license>
-			<helper_core>app/code/community/Fishpig/Wordpress/Addon/AMP/Helper/Core.php</helper_core>
-			<observer>app/code/community/Fishpig/Wordpress/Addon/AMP/Model/Observer.php</observer>
-			<block_license>app/code/community/Fishpig/Wordpress/Addon/AMP/Block/System/Config/Form/Field/License.php</block_license>
-		</encode>
-	</fishpig>
+	<wordpress>
+		<core>
+			<modules>
+				<wp_addon_amp/>
+			</modules>
+		</core>
+	</wordpress>
 </config>
