@@ -56,8 +56,9 @@ class Fishpig_Wordpress_Addon_AMP_Model_Observer
 			return $this;
 		}
 
-		try {
-			$coreHelper = Mage::helper('wp_addon_amp/core');			
+		try {    
+            echo Mage::helper('wp_addon_amp/core')->getHtml();
+			exit;
 		}
 		catch (Exception $e) {
 			Mage::helper('wordpress')->log($e->getMessage());
