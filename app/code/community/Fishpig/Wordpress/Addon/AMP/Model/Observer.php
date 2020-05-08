@@ -22,14 +22,20 @@ class Fishpig_Wordpress_Addon_AMP_Model_Observer
 		
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$requestUri = $_SERVER['REQUEST_URI'];
-			
+
 			if (strpos($requestUri, '?') !== false) {
 				$queryString = ltrim(substr($requestUri, strpos($requestUri, '?')), '?');
 				
 				if (strpos($queryString, 'amp=1') !== false) {
 					return true;
 				}
+				
+				$requestUri = substr($requestUri, 0, strpos($requestUri, '?'));
 			}
+
+            if (strpos($requestUri, '/amp/') !== false || substr($requestUri, -4) === '/amp') {
+                return true;
+    		}
 		}
 
 		return false;
@@ -47,7 +53,7 @@ class Fishpig_Wordpress_Addon_AMP_Model_Observer
 		if (!$this->isAmp()) {
 			return $this;
 		}
-		
+
 		if ('' !== Mage::app()->getRequest()->getParam('preview', '')) {
 			return $this;
 		}
@@ -56,13 +62,11 @@ class Fishpig_Wordpress_Addon_AMP_Model_Observer
 			return $this;
 		}
 
-		try {    
-            echo Mage::helper('wp_addon_amp/core')->getHtml();
-			exit;
-		}
-		catch (Exception $e) {
-			Mage::helper('wordpress')->log($e->getMessage());
-		}
+		define('WP_CORE_DISABLE_OUTPUT_BUFFERING', true);
+        
+        Mage::helper('wp_addon_amp/core');
+        
+        throw new Exception('There was an issue loading AMP.');
 		
 		return $this;
 	}
@@ -90,7 +94,7 @@ class Fishpig_Wordpress_Addon_AMP_Model_Observer
 			return $this;
 		}
 
-		$headBlock->addItem('link_rel', $object->getPermalink() . '?amp=1', 'rel="amphtml"');
+		$headBlock->addItem('link_rel', rtrim($object->getPermalink() . '/') . '/amp/', 'rel="amphtml"');
 		
 		return $this;
 	}
